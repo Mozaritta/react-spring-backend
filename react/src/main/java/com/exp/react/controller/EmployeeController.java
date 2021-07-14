@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -39,7 +42,7 @@ public class EmployeeController {
     }
     
     // update employee by id
-    @PutMapping("/employee/{id}")
+    @PutMapping("/employees/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employeeDetails){
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such employee"));
         employee.setEmailId(employeeDetails.getEmailId());
@@ -49,6 +52,15 @@ public class EmployeeController {
         employeeRepository.save(employee);
         return ResponseEntity.ok(employee);
 
+    }
+    // delete employee rest api
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<Map<String, Boolean>> deleteEmployee(Long id){
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+        employeeRepository.delete(employee);
+        Map<String,Boolean> response = new HashMap<>();
+        response.put("deleted", true);
+        return ResponseEntity.ok(response);
     }
     
 }
